@@ -131,3 +131,18 @@ html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Seg
   padding: 16px 18px;
   backdrop-filter: blur(6px);
 }
+
+#id_image{
+  width: 100%;
+  margin: 6px auto 8px auto;   
+  display: block;              /* pour que margin auto marche */
+  color: rgba(255,255,255,.9);
+}
+
+
+
+
+#id_image::file-selector-button, #id_image::-webkit-file-upload-button{
+  display: none;
+}
+

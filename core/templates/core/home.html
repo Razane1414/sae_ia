@@ -20,9 +20,9 @@
       <form method="post" enctype="multipart/form-data" class="uploader">
         {% csrf_token %}
 
-        <!-- Input file caché + label cliquable -->
-        <input id="file" class="uploader__input" type="file" name="image" accept="image/*" required>
-        <label for="file" class="uploader__drop">
+        {{ form.image }}
+
+        <label for="{{ form.image.id_for_label }}" class="uploader__drop">
           <div class="uploader__cloud" aria-hidden="true"></div>
           <div class="uploader__text">Drag and drop to upload</div>
         </label>
