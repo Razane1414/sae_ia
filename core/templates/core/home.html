@@ -1,0 +1,43 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yummy</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg">
+
+  <main class="page">
+    <header class="brand">
+      <div class="brand__icon" aria-hidden="true"></div>
+      <div class="brand__name">Yummy</div>
+      <h1 class="brand__title">Je scanne, j’analyse, je te <span>conseille</span>.</h1>
+    </header>
+
+    <section class="card">
+      <form method="post" enctype="multipart/form-data" class="uploader">
+        {% csrf_token %}
+
+        <!-- Input file caché + label cliquable -->
+        <input id="file" class="uploader__input" type="file" name="image" accept="image/*" required>
+        <label for="file" class="uploader__drop">
+          <div class="uploader__cloud" aria-hidden="true"></div>
+          <div class="uploader__text">Drag and drop to upload</div>
+        </label>
+
+        <button class="btn" type="submit">Upload</button>
+      </form>
+    </section>
+
+    {% if result %}
+      <section class="result">
+        <h2>Analyse & conseils</h2>
+        <p>{{ result }}</p>
+      </section>
+    {% endif %}
+  </main>
+
+</body>
+</html>
