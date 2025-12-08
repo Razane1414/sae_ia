@@ -14,8 +14,10 @@ from transformers import (
 )
 
 BLIP_MODEL_ID = "Salesforce/blip-image-captioning-base"
-FLAN_MODEL_ID = "google/flan-t5-small"
-
+FLAN_MODEL_IDS = [
+    "google/flan-t5-small",
+    "google/flan-t5-base",
+]
 
 def download_blip():
     print(f"Download BLIP: {BLIP_MODEL_ID}")
@@ -24,17 +26,17 @@ def download_blip():
     print("BLIP OK\n")
 
 
-def download_flan():
-    print(f"Download FLAN: {FLAN_MODEL_ID}")
-    AutoTokenizer.from_pretrained(FLAN_MODEL_ID)
-    AutoModelForSeq2SeqLM.from_pretrained(FLAN_MODEL_ID)
-    print("FLAN OK\n")
-
+def download_flan(model_id: str):
+    print(f"Download FLAN: {model_id}")
+    AutoTokenizer.from_pretrained(model_id)
+    AutoModelForSeq2SeqLM.from_pretrained(model_id)
+    print("OK\n")
 
 def main():
     try:
         download_blip()
-        download_flan()
+        for mid in FLAN_MODEL_IDS:
+            download_flan(mid)
         print("Tous les modèles sont téléchargés et en cache.")
     except Exception as e:
         print("\n Erreur pendant le téléchargement :", repr(e), file=sys.stderr)

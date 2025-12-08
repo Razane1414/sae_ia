@@ -1,0 +1,72 @@
+date: 05/12
+
+
+codecarbon monitor --offline --country-iso-code FRA
+[codecarbon INFO @ 15:41:24] Codecarbon is taking the configuration from global file: C:\Users\razan\.codecarbon.config
+[codecarbon INFO @ 15:41:24] offline tracker init
+[codecarbon INFO @ 15:41:25] Codecarbon is taking the configuration from global file: C:\Users\razan\.codecarbon.config
+[codecarbon WARNING @ 15:41:25] Multiple instances of codecarbon are allowed to run at the same time.
+[codecarbon INFO @ 15:41:25] [setup] RAM Tracking...
+[codecarbon INFO @ 15:41:25] [setup] CPU Tracking...
+[codecarbon WARNING @ 15:41:26] No CPU tracking mode found. Falling back on estimation based on TDP for CPU. 
+ Windows OS detected: Please install Intel Power Gadget to measure CPU
+
+[codecarbon INFO @ 15:41:26] CPU Model on constant consumption mode: AMD Ryzen 7 7735HS with Radeon Graphics
+[codecarbon WARNING @ 15:41:26] No CPU tracking mode found. Falling back on CPU constant mode.
+[codecarbon INFO @ 15:41:26] [setup] GPU Tracking...
+[codecarbon INFO @ 15:41:26] Tracking Nvidia GPU via pynvml
+[codecarbon INFO @ 15:41:26] The below tracking methods have been set up:
+                RAM Tracking Method: RAM power estimation model
+                CPU Tracking Method: global constant
+                GPU Tracking Method: pynvml
+
+[codecarbon INFO @ 15:41:26] >>> Tracker's metadata:
+[codecarbon INFO @ 15:41:26]   Platform system: Windows-11-10.0.26100-SP0
+[codecarbon INFO @ 15:41:26]   Python version: 3.13.5
+[codecarbon INFO @ 15:41:26]   CodeCarbon version: 3.2.0
+[codecarbon INFO @ 15:41:26]   Available RAM : 15.309 GB
+[codecarbon INFO @ 15:41:26]   CPU count: 16 thread(s) in 16 physical CPU(s)
+[codecarbon INFO @ 15:41:26]   CPU model: AMD Ryzen 7 7735HS with Radeon Graphics
+[codecarbon INFO @ 15:41:26]   GPU count: 1
+[codecarbon INFO @ 15:41:26]   GPU model: 1 x NVIDIA GeForce RTX 4060 Laptop GPU
+[codecarbon INFO @ 15:41:26] Emissions data (if any) will be saved to file C:\Users\razan\Documents\MMI3\ia_cours\sae_ia\emissions.csv
+CodeCarbon is going in an infinite loop to monitor this machine.
+Press Ctrl+C to stop and save emissions data.
+[codecarbon INFO @ 15:41:36] Energy consumed for RAM : 0.000028 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:41:36] Delta energy consumed for CPU with constant : 0.001202 kWh, power : 432.0 W
+[codecarbon INFO @ 15:41:36] Energy consumed for All CPU : 0.001202 kWh
+[codecarbon INFO @ 15:41:36] Energy consumed for all GPUs : 0.000006 kWh. Total GPU Power : 2.3340485617476907 W
+[codecarbon INFO @ 15:41:36] 0.001236 kWh of electricity and 0.000000 L of water were used since the beginning.
+[codecarbon INFO @ 15:41:46] Energy consumed for RAM : 0.000056 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:41:46] Delta energy consumed for CPU with constant : 0.001200 kWh, power : 432.0 W
+[codecarbon INFO @ 15:41:46] Energy consumed for All CPU : 0.002402 kWh
+[codecarbon INFO @ 15:41:46] Energy consumed for all GPUs : 0.000015 kWh. Total GPU Power : 3.183745227407839 W
+[codecarbon INFO @ 15:41:46] 0.002473 kWh of electricity and 0.000000 L of water were used since the beginning.
+[codecarbon INFO @ 15:41:56] Energy consumed for RAM : 0.000083 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:41:56] Delta energy consumed for CPU with constant : 0.001201 kWh, power : 432.0 W
+[codecarbon INFO @ 15:41:56] Energy consumed for All CPU : 0.003604 kWh
+[codecarbon INFO @ 15:41:56] Energy consumed for all GPUs : 0.000025 kWh. Total GPU Power : 3.6091661104489656 W
+[codecarbon INFO @ 15:41:56] 0.003712 kWh of electricity and 0.000000 L of water were used since the beginning.
+[codecarbon INFO @ 15:42:06] Energy consumed for RAM : 0.000111 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:42:06] Delta energy consumed for CPU with constant : 0.001200 kWh, power : 432.0 W
+[codecarbon INFO @ 15:42:06] Energy consumed for All CPU : 0.004804 kWh
+[codecarbon INFO @ 15:42:06] Energy consumed for all GPUs : 0.000039 kWh. Total GPU Power : 5.003931211810128 W
+[codecarbon INFO @ 15:42:06] 0.004954 kWh of electricity and 0.000000 L of water were used since the beginning.
+[codecarbon INFO @ 15:42:16] Energy consumed for RAM : 0.000139 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:42:16] Delta energy consumed for CPU with constant : 0.001201 kWh, power : 432.0 W
+[codecarbon INFO @ 15:42:16] Energy consumed for All CPU : 0.006005 kWh
+[codecarbon INFO @ 15:42:16] Energy consumed for all GPUs : 0.000054 kWh. Total GPU Power : 5.351100249753841 W
+[codecarbon INFO @ 15:42:16] 0.006199 kWh of electricity and 0.000000 L of water were used since the beginning.
+[codecarbon INFO @ 15:42:26] Energy consumed for RAM : 0.000167 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:42:26] Delta energy consumed for CPU with constant : 0.001201 kWh, power : 432.0 W
+[codecarbon INFO @ 15:42:26] Energy consumed for All CPU : 0.007206 kWh
+[codecarbon INFO @ 15:42:26] Energy consumed for all GPUs : 0.000065 kWh. Total GPU Power : 3.7516060884106426 W
+[codecarbon INFO @ 15:42:26] 0.007438 kWh of electricity and 0.000000 L of water were used since the beginning.
+
+Received signal to stop. Saving emissions data...
+[codecarbon INFO @ 15:42:35] Energy consumed for RAM : 0.000191 kWh. RAM Power : 10.0 W
+[codecarbon INFO @ 15:42:35] Delta energy consumed for CPU with constant : 0.001047 kWh, power : 432.0 W
+[codecarbon INFO @ 15:42:35] Energy consumed for All CPU : 0.008254 kWh
+[codecarbon INFO @ 15:42:35] Energy consumed for all GPUs : 0.000086 kWh. Total GPU Power : 8.835388042865295 W
+[codecarbon INFO @ 15:42:35] 0.008531 kWh of electricity and 0.000000 L of water were used since the beginning.
+(.venv) (base) PS C:\Users\razan\Documents\MMI3\ia_cours\sae_ia> 

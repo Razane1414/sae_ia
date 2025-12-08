@@ -8,36 +8,54 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="bg">
-
   <main class="page">
     <header class="brand">
       <div class="brand__icon" aria-hidden="true"></div>
       <div class="brand__name">Yummy</div>
-      <h1 class="brand__title">Je scanne, j’analyse, je te <span>conseille</span>.</h1>
+      <h1 class="brand__title">Je scanne, je détourne, je fais des <span>stickers</span>.</h1>
     </header>
 
     <section class="card">
-      <form method="post" enctype="multipart/form-data" class="uploader">
-        {% csrf_token %}
 
-        {{ form.image }}
+      {% if not state %}
+        <form method="post" enctype="multipart/form-data" class="uploader">
+          {% csrf_token %}
+          {{ upload_form.image }}
+          <label for="{{ upload_form.image.id_for_label }}" class="uploader__drop">
+            <div class="uploader__cloud" aria-hidden="true"></div>
+            <div class="uploader__text">Drag and drop to upload</div>
+          </label>
+          <button class="btn" type="submit">Générer</button>
+        </form>
 
-        <label for="{{ form.image.id_for_label }}" class="uploader__drop">
-          <div class="uploader__cloud" aria-hidden="true"></div>
-          <div class="uploader__text">Drag and drop to upload</div>
-        </label>
+      {% else %}
+        <div class="result">
+          <h2>Sticker pack</h2>
 
-        <button class="btn" type="submit">Upload</button>
-      </form>
+          <img src="{{ state.image_url }}" alt="Image uploadée"
+               style="max-width:100%; border-radius:16px; display:block; margin:12px 0;">
+
+          <p><strong>Caption (BLIP):</strong> {{ state.caption }}</p>
+
+          {% if state.sticker_urls %}
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
+              {% for url in state.sticker_urls %}
+                <div style="flex: 1 1 220px; max-width:260px;">
+                  <img src="{{ url }}" alt="Sticker"
+                       style="width:100%; border-radius:16px; background: rgba(255,255,255,.06); padding:10px; display:block;">
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <a class="btn" href="/?reset=1"
+             style="display:inline-grid; place-items:center; text-decoration:none; margin-top:16px;">
+            Nouvelle image
+          </a>
+        </div>
+      {% endif %}
+
     </section>
-
-    {% if result %}
-      <section class="result">
-        <h2>Analyse & conseils</h2>
-        <p>{{ result }}</p>
-      </section>
-    {% endif %}
   </main>
-
 </body>
 </html>
