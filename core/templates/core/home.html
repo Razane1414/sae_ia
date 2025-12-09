@@ -4,57 +4,97 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yummy</title>
+  <title>Sticker Studio</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body class="bg">
   <main class="page">
-    <header class="brand">
-      <div class="brand__icon" aria-hidden="true"></div>
-      <div class="brand__name">Yummy</div>
-      <h1 class="brand__title">Je scanne, je détourne, je fais des <span>stickers</span>.</h1>
-    </header>
+  <header class="brand">
+    <img class="brand__logo" src="{% static 'img/logo_yummy.png' %}" alt="Logo Sticker Studio">
+    <div class="brand__name">Sticker Studio</div>
+    <h1 class="brand__title">Upload → choix option → <span>pack</span></h1>
+  </header>
+
 
     <section class="card">
-
       {% if not state %}
         <form method="post" enctype="multipart/form-data" class="uploader">
           {% csrf_token %}
           {{ upload_form.image }}
           <label for="{{ upload_form.image.id_for_label }}" class="uploader__drop">
             <div class="uploader__cloud" aria-hidden="true"></div>
-            <div class="uploader__text">Drag and drop to upload</div>
+            <div class="uploader__text">Drag & drop</div>
           </label>
-          <button class="btn" type="submit">Générer</button>
+          <button class="btn" type="submit">Analyser</button>
         </form>
 
       {% else %}
         <div class="result">
-          <h2>Sticker pack</h2>
+          <h2>{{ state.caption }}</h2>
 
-          <img src="{{ state.image_url }}" alt="Image uploadée"
-               style="max-width:100%; border-radius:16px; display:block; margin:12px 0;">
+          <img
+            src="{{ state.image_url }}"
+            alt="Image uploadée"
+            style="max-width:100%; border-radius:16px; display:block; margin:12px 0;"
+          >
 
-          <p><strong>Caption (BLIP):</strong> {{ state.caption }}</p>
+          {% if state.step == "choose_mode" %}
+            <p style="margin-top:14px;"><strong>Choisis une option :</strong></p>
 
-          {% if state.sticker_urls %}
+            <form method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+              {% csrf_token %}
+              <button class="btn" name="mode" value="bg" type="submit">Background remover</button>
+              <button class="btn" name="mode" value="sticker" type="submit">Sticker simple</button>
+              <button class="btn" name="mode" value="badge" type="submit">Badge / Pictogramme</button>
+            </form>
+
+          {% elif state.step == "choose_theme" %}
+            <p style="margin-top:14px;"><strong>Choisis une couleur de badge :</strong></p>
+
+            <form method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+              {% csrf_token %}
+              {% for t in themes %}
+                <button class="btn" name="theme" value="{{ t }}" type="submit">{{ t|title }}</button>
+              {% endfor %}
+            </form>
+
+          {% else %}
+            <p>
+              <strong>Option choisie :</strong> {{ state.mode }}
+              {% if state.mode == "badge" %} ({{ state.theme }}){% endif %}
+            </p>
+
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
-              {% for url in state.sticker_urls %}
+              {% for url in state.output_urls %}
                 <div style="flex: 1 1 220px; max-width:260px;">
-                  <img src="{{ url }}" alt="Sticker"
-                       style="width:100%; border-radius:16px; background: rgba(255,255,255,.06); padding:10px; display:block;">
+                  <img
+                    src="{{ url }}"
+                    alt="Résultat"
+                    style="width:100%; border-radius:16px; background: rgba(255,255,255,.06); padding:10px; display:block;"
+                  >
+                  <a
+                    class="btn"
+                    href="{{ url }}"
+                    download
+                    style="display:inline-grid; place-items:center; text-decoration:none; margin-top:16px;"
+                  >
+                    Télécharger
+                  </a>
                 </div>
               {% endfor %}
             </div>
-          {% endif %}
 
-          <a class="btn" href="/?reset=1"
-             style="display:inline-grid; place-items:center; text-decoration:none; margin-top:16px;">
-            Nouvelle image
-          </a>
+            <a
+              class="btn"
+              href="/?reset=1"
+              style="display:inline-grid; place-items:center; text-decoration:none; margin-top:16px;"
+            >
+              Nouvelle image
+            </a>
+          {% endif %}
         </div>
       {% endif %}
-
     </section>
   </main>
 </body>

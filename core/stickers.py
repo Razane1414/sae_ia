@@ -1,121 +1,126 @@
 import os
-import re
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
-from matplotlib.pyplot import draw
+import uuid
+from PIL import Image, ImageDraw, ImageFilter, ImageChops
 
-from .ai import remove_background 
+from .ai import remove_background
 
-#_slug génère un nom de fichier "propre" : partir du nom original
-def _slug(name: str) -> str:
-    name = (name or "").lower().strip()
-    name = re.sub(r"[^a-z0-9]+", "-", name) # remplace les caractères non alphanumériques par des tirets
-    return (name.strip("-")[:60] or "sticker")
 
-def make_cutout(pil_rgb: Image.Image) -> Image.Image:
-    """
-    Retourne un PNG RGBA avec fond transparent (via rembg).
-    """
-    if pil_rgb.mode != "RGB":
-        pil_rgb = pil_rgb.convert("RGB")
-    return remove_background(pil_rgb)
 
-def add_outline(cut_rgba: Image.Image, stroke_px: int = 18) -> Image.Image:
+# background removal
+def detourer_sujet(img_rgb: Image.Image) -> Image.Image:
+    """Retourne un PNG RGBA avec fond transparent (avec rembg)."""
+    if img_rgb.mode != "RGB":
+        img_rgb = img_rgb.convert("RGB")
+    return remove_background(img_rgb)
+
+# sticker
+def ajouter_contour(image_rgba: Image.Image, stroke_px: int = 10, color=(255, 255, 255, 255)) -> Image.Image:
     """
     Ajoute un contour type sticker autour du sujet.
-    (Contour blanc par défaut)
+    - image_rgba : image avec transparence (RGBA)
+    - epaisseur  : épaisseur du contour en pixels
+    - couleur    : couleur du contour (RGBA)
     """
-    cut_rgba = cut_rgba.convert("RGBA")
-    alpha = cut_rgba.split()[-1]
+    image_rgba = image_rgba.convert("RGBA")
+    
+    # alpha : le masque de transparence : 0 = transparent, 255 = opaque
+    alpha = image_rgba.split()[-1]
 
-    # dilation du masque alpha
+    # on dilate le masque alpha pour créer le contour
     dilated = alpha.filter(ImageFilter.MaxFilter(stroke_px * 2 + 1))
-    outline_mask = ImageChops.subtract(dilated, alpha)
-    outline_mask = outline_mask.filter(ImageFilter.GaussianBlur(1))
 
+    masque_contour  = ImageChops.subtract(dilated, alpha)
+    masque_contour  = masque_contour .filter(ImageFilter.GaussianBlur(1)) 
 
-    outline = Image.new("RGBA", cut_rgba.size, (255, 255, 255, 255))
-    outline.putalpha(outline_mask)
+    contour = Image.new("RGBA", image_rgba.size, color)
+    contour.putalpha(masque_contour )
 
-    out = Image.new("RGBA", cut_rgba.size, (0, 0, 0, 0))
-    out.alpha_composite(outline)
-    out.alpha_composite(cut_rgba)
+    out = Image.new("RGBA", image_rgba.size, (0, 0, 0, 0))
+    out.alpha_composite(contour)
+    out.alpha_composite(image_rgba)
     return out
 
 
 
-def make_label_sticker(sticker_rgba: Image.Image, caption: str) -> Image.Image:
+
+# badge
+def creer_fond(size: int, theme: str = "pink") -> Image.Image:
+    themes = {
+        "pink": ((255, 90, 160, 255), (255, 255, 255, 85)),
+        "dark": ((20, 20, 30, 255), (255, 255, 255, 70)),
+        "mint": ((60, 220, 180, 255), (255, 255, 255, 85)),
+    }
+    base, glow = themes.get(theme, themes["pink"])
+
+    bg = Image.new("RGBA", (size, size), base)
+    halo = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(halo)
+    draw.ellipse([40, 40, size - 40, size - 40], fill=glow)
+    halo = halo.filter(ImageFilter.GaussianBlur(35))
+    bg.alpha_composite(halo)
+    return bg
+
+def creer_badge(img_rgb: Image.Image, size: int = 512, theme: str = "dark") -> Image.Image:
     """
-    Ajoute une étiquette texte (caption) sous le sticker.
+    Crée un badge rond avec le sujet centré sur un fond coloré.
+    - img_rgb : image RGB d'entrée
+    - size    : taille du badge (largeur=hauteur)           
+    - theme   : thème de couleur du fond ("pink", "dark", "mint")
     """
-    sticker_rgba = sticker_rgba.convert("RGBA")
-    w, h = sticker_rgba.size
+    cut = detourer_sujet(img_rgb)
+    cut = cut.copy()
+    cut.thumbnail((size, size), Image.LANCZOS)
 
-    pad = 40
-    label_h = 100
-    canvas = Image.new("RGBA", (w + pad * 2, h + pad * 2 + label_h), (0, 0, 0, 0))
-    canvas.alpha_composite(sticker_rgba, (pad, pad))
+    bg = creer_fond(size, theme=theme)
 
-    draw = ImageDraw.Draw(canvas)
-    font = ImageFont.load_default()
+    canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    canvas.alpha_composite(bg)
 
-    text = (caption or "").strip()
-    if len(text) > 70:
-        text = text[:67] + "…"
+    x = (size - cut.size[0]) // 2
+    y = (size - cut.size[1]) // 2
+    canvas.alpha_composite(cut, (x, y))
 
-    # bandeau semi-transparent
-    y0 = h + pad + 15
-    
-    draw.rounded_rectangle([pad, y0, w + pad, y0 + 70], radius=16, fill=(255,255,255,220))
-    draw.text((pad + 14, y0 + 20), text, font=font, fill=(10,10,10,255))
+    masque_rond = Image.new("L", (size, size), 0)
+    dm = ImageDraw.Draw(masque_rond)
+    dm.ellipse([10, 10, size - 10, size - 10], fill=255)
 
-    return canvas
+    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    out.paste(canvas, (0, 0), masque_rond)
 
+    border = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    db = ImageDraw.Draw(border)
+    db.ellipse([10, 10, size - 10, size - 10], outline=(255, 255, 255, 255), width=12)
+    out.alpha_composite(border)
 
-
-def trim_transparent(img: Image.Image) -> Image.Image:
-    img = img.convert("RGBA")
-    bbox = img.getbbox()
-    if not bbox:
-        return img
-    return img.crop(bbox)
-
-def center_on_canvas(img: Image.Image, size=(512, 512), margin=40) -> Image.Image:
-    img = img.convert("RGBA")
-    img = trim_transparent(img)
-
-    w, h = img.size
-    max_w, max_h = size[0] - 2*margin, size[1] - 2*margin
-    scale = min(max_w / w, max_h / h, 1.0)
-    img = img.resize((int(w*scale), int(h*scale)), Image.Resampling.LANCZOS)
-
-    canvas = Image.new("RGBA", size, (0,0,0,0))
-    x = (size[0] - img.size[0]) // 2
-    y = (size[1] - img.size[1]) // 2
-    canvas.alpha_composite(img, (x, y))
-    return canvas
+    return out
 
 
-def generate_stickers(pil_rgb: Image.Image, caption: str, out_dir: str, base_name: str):
-    """
-    Génère 3 PNG :
-    - cutout (fond transparent)
-    - outline (contour sticker)
-    - label (outline + caption)
-    Retourne la liste des chemins.
-    """
+def main(pil_rgb: Image.Image, out_dir: str, base_name: str, mode: str = "sticker", theme: str = "dark"):
     os.makedirs(out_dir, exist_ok=True)
-    base = _slug(base_name)
-    cut = center_on_canvas(make_cutout(pil_rgb), size=(512, 512), margin=40)
+    base = uuid.uuid4().hex
+    paths = []
 
-    outline = add_outline(cut, stroke_px=18)
-    label = make_label_sticker(outline, caption)
+    if mode == "bg":
+        cut = detourer_sujet(pil_rgb)
+        p = os.path.join(out_dir, f"{base}_cutout.png")
+        cut.save(p)
+        paths.append(p)
 
-    p1 = os.path.join(out_dir, f"{base}_cutout.png")
-    p2 = os.path.join(out_dir, f"{base}_outline.png")
-    p3 = os.path.join(out_dir, f"{base}_label.png")
+    elif mode == "badge":
+        badge = creer_badge(pil_rgb, size=512, theme=theme)
+        p = os.path.join(out_dir, f"{base}_badge_{theme}.png")
+        badge.save(p)
+        paths.append(p)
 
-    cut.save(p1)
-    outline.save(p2)
-    label.save(p3)
+    else:  # "sticker"
+        cut = detourer_sujet(pil_rgb)
+        sticker = ajouter_contour(cut, stroke_px=18, color=(255, 255, 255, 255))
 
-    return [p1, p2, p3]
+        p1 = os.path.join(out_dir, f"{base}_cutout.png")
+        p2 = os.path.join(out_dir, f"{base}_sticker.png")
+
+        cut.save(p1)
+        sticker.save(p2)
+        paths.extend([p1, p2])
+
+    return paths

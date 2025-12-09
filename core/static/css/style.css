@@ -20,6 +20,13 @@ html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Seg
   color: rgba(255,255,255,.95);
 }
 
+.brand__logo{
+  width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto; /* centre + espace dessous */
+}
+
 .brand__icon{
   width: 64px;
   height: 64px;
@@ -92,7 +99,6 @@ html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Seg
   border: 2px solid rgba(255,255,255,.18);
 }
 
-/* ✅ Icône importée depuis /static/img/ */
 .uploader__cloud{
   width: 64px;
   height: 64px;
