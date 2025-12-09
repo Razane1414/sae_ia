@@ -5,8 +5,7 @@ from PIL import Image
 from codecarbon import OfflineEmissionsTracker
 
 from core.ai import generate_caption
-from core.stickers import detourer_sujet, ajouter_contour  # noms FR
-
+from core.stickers import detourer_sujet, ajouter_contour  
 COUNTRY = "FRA"
 N_RUNS = 10
 TEST_IMAGE_PATH = os.path.join("tests", "images_test.jpg")
@@ -49,7 +48,7 @@ def main():
     # BLIP
     t, kg, cap = measure_many(
         "BLIP_caption",
-        "blip.csv",
+        "blip_final.csv", 
         lambda: generate_caption(img),
         warmup=True
     )
@@ -60,7 +59,7 @@ def main():
     # REMBG (cutout)
     t, kg, _ = measure_many(
         "REMBG_cutout",
-        "rembg.csv",
+        "rembg_final.csv",
         lambda: detourer_sujet(img),
         warmup=True
     )
@@ -76,7 +75,7 @@ def main():
 
     t, kg, out = measure_many(
         "FULL_pipeline",
-        "full.csv",
+        "full_final.csv", 
         full,
         warmup=True
     )
